@@ -1,0 +1,29 @@
+<div class="div1" id="div1">
+    <!--在h5中，如果想拖拽元素，就必须为元素添加draggable="true". 图片和超链接默认就可以拖拽-->
+    <p id="pe" draggable="true">试着把我拖过去</p>
+    <p id="pe1" draggable="true">试着也把我拖过去</p>
+</div>
+<div class="div2" id="div2"></div>
+<div class="div3" id="div3"></div>
+<script>
+
+    //应用于被拖拽元素的事件
+    document.ondragstart=function(e){
+        // 把拖拽元素的id值存储起来
+        e.dataTransfer.setData("text/html", e.target.id);
+    };
+
+    //应用于目标元素的事件
+    document.ondragover=function(e){
+        /*如果想触发ondrop事件，那么就必须在这个位置阻止浏览器的默认行为*/
+        e.preventDefault();
+    };
+    /*浏览器默认会阻止ondrop事件：我们必须在ondragover中阻止浏览器的默认行为*/
+    document.ondrop=function(e){
+        /*添加元素*/
+        /*通过e.dataTransfer.setData存储的数据，只能在drop事件中获取*/
+        var id=e.dataTransfer.getData("text/html");
+        // 通过id方式添加元素
+        e.target.appendChild(document.getElementById(id));
+    };
+</script>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./moment/moment.js"></script>
+    <script>
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss')) // 2020-10-29 10:02:46  当前时间        
+        console.log(moment().date())   //获取天
+        console.log(moment().hours()) // 获取小时
+        console.log(moment().format('d'))  //今天是星期几
+        console.log(moment("20130101", "YYYYMMDD").fromNow()); // 8 years ago
+        console.log(moment("20151029", "YYYYMMDD").fromNow()); // 2 years ago
+        console.log(moment().add('days',20).format('YYYY-MM-DD')); // 20天后的日期
+        console.log(moment().add('hours',9).format('HH:mm:ss')); // 9小时后
+        console.log(moment().format('YYYY-MM-DD'))     //今天
+        console.log(moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')); // 明天
+        console.log(moment().subtract(30, 'days').format('YYYY-MM-DD HH:mm:ss')) //倒退30天
+        console.log(moment().startOf('month'),moment().endOf('month'))
+        console.log(moment().add(30, 'days').format('YYYY-MM-DD HH:mm:ss')) //预测30天
+    </script>
+    
+</body>
+</html>

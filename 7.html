@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="div1" id="div1">
+        <!--在h5中，如果想拖拽元素，就必须为元素添加draggable="true". 图片和超链接默认就可以拖拽-->
+        <p id="pe" draggable="true">试着把我拖过去</p>
+    </div>
+    <div class="div2" id="div2">456789213</div>
+    <script>
+        /*学习拖拽，主要就是学习拖拽事件*/
+        var p=document.querySelector("#pe");
+        var div2=document.querySelector("#div2");
+    
+        // 应用于被拖拽元素
+        p.ondragstart=function(){
+            console.log("ondragstart");
+        }
+        p.ondragend=function(){
+            console.log("ondragend");
+        }
+        p.ondragleave=function(){
+            console.log("被拖拽元素：ondragleave");
+        }
+        p.ondrag=function(){
+            console.log("ondrag");
+        }
+    
+        // 应用于目标元素的事件
+        div2.ondragenter=function(){
+            console.log("ondragenter");
+        }
+        div2.ondragover=function(e){
+            console.log("ondragover");
+            /*如果想触发ondrop事件，那么就必须在这个位置阻止浏览器的默认行为*/
+            e.preventDefault();
+        }
+        /*浏览器默认会阻止ondrop事件：我们必须在ondragover中阻止浏览器的默认行为*/
+        div2.ondrop=function(){
+            console.log("ondrop");
+            /*添加被拖拽的元素到当前目标元素*/
+            div2.appendChild(p);
+        }
+        div2.ondragleave=function(){
+            console.log("目标元素：ondragleave");
+        }
+    </script>
+</body>
+</html>

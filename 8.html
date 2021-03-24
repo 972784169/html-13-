@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="div1" id="div1">
+        <p id="pe" draggable="true">试着把我拖过去</p>
+        <p id="pe1" draggable="true">试着也把我拖过去</p>
+    </div>
+    <div class="div2" id="div2"></div>
+    <div class="div3" id="div3"></div>
+    <script>
+        var obj=null;//当前被拖拽的地元素
+    
+        //应用于被拖拽元素的事件
+        document.ondragstart=function(e){
+            obj= e.target;
+        }
+    
+        //应用于目标元素的事件
+        document.ondragover=function(e){
+            /*如果想触发ondrop事件，那么就必须在这个位置阻止浏览器的默认行为*/
+            e.preventDefault();
+        }
+        /*浏览器默认会阻止ondrop事件：我们必须在ondragover中阻止浏览器的默认行为*/
+        document.ondrop=function(e){
+            /*添加元素*/
+            e.target.appendChild(obj);
+        }
+    </script>
+</body>
+</html>

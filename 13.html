@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <router-view></router-view>
+  </div>
+</body>
+
+<script src="./js/vue.js"></script>
+<script src="./js/vue-router.js"></script>
+<script src="./js/vuex.js"></script>
+<script type="text/javascript">
+const login=Vue.component('login',{
+  template:`
+    <div>
+        <input v-model="value">
+        <button @click="login">登录</button>
+      </div>
+  `,
+  data(){
+    return{
+      value:''
+    }
+  },
+  methods:{
+    login(){
+      if(this.value==''){
+        alert("用户名不能为空");
+        return;
+      }
+      sessionStorage.setItem('user',this.value);
+      console.log(this.$router)
+      let path=this.$route.query.redirect;
+      this.$router.replace({
+        path:path==undefined?'/resturantNameA':path
+      })
+    }
+  }
+})
+  const resturantNameA = Vue.component('resturantNameA', {
+    template: `
+      <div>
+        <h1>这是餐馆{{this.$store.state.resturantName+'A'}}</h1>
+        <input v-model="name" />
+        <button @click="changeName">修改名字</button>
+        </div>
+    `,
+    data() {
+      return {
+        name: ''
+      }
+    },
+    watch: {
+
+    },
+    methods: {
+      changeName() {
+        if (this.name != '') {
+          this.$store.dispatch('modifyName', this.name);
+          this.$router.replace({
+            path: '/resturantNameB'
+          })
+        }
+        else{
+          alert("餐馆名字为空");
+          return;
+        }
+      }
+    }
+  })
+  const resturantNameB = Vue.component('resturantNameB', {
+    template: `
+      <div>
+        <h1>这是餐馆{{this.$store.state.resturantName+'B'}}</h1>
+        <input v-model="name"/>
+        <button @click="changeName">修改名字</button>
+        </div>
+    `,
+    data() {
+      return {
+        name: ''
+      }
+    },
+    data() {
+      return {
+        name: ''
+      }
+    },
+    methods: {
+      changeName() {
+        if (this.name != '') {
+          this.$store.dispatch('modifyName', this.name);
+          this.$router.replace({
+            path: '/resturantNameA'
+          })
+        }
+        else{
+          alert("餐馆名字为空");
+          return;
+        }
+      }
+    }
+  })
+  const routes = [
+    
+    { path: '/', redirect: '/login' },
+    { path: '/login', component: login,name:'login' },
+    { 
+      path: '/resturantNameA', 
+      component: resturantNameA, 
+      name: 'resturantNameA',
+      meta:{
+        loginRequire:true
+      }
+     },
+    { 
+      path: '/resturantNameB', 
+      component: resturantNameB, 
+      name: 'resturantNameB',
+      meta:{
+        loginRequire:true
+      }
+    },
+
+  ]
+  const router = new VueRouter({
+    history:'mode',
+    routes: routes
+  })
+  //Vue.use(Vuex);
+
+  const store = new Vuex.Store({
+    state: {
+      resturantName: 'test'
+    },
+    mutations: {
+      modifyName(state, name) {
+        state.resturantName = name;
+      }
+    },
+    actions: {
+      modifyName({ commit }, name) {
+        commit('modifyName', name)
+      }
+    }
+  })
+  Vue.prototype.$store = store
+  // router.beforeEach((to,from,next)=>{
+  //   console.log($store.state.resturantName)
+  //   next();
+  // })
+
+  router.beforeEach((to, from, next) => {
+    let user=sessionStorage.getItem('user');
+    if(to.path=='/login'){
+      if(user!=null||user!=undefined){
+        next({path:from.path});
+        return;
+      }
+      next();
+      return;
+    }
+    
+    console.log(user)
+    if(to.meta.loginRequire){
+      if(user!=null||user!=undefined){
+        next();
+      }
+      else{
+        next({path:'/login',query:{redirect:to.path}})
+      }
+    }
+    else{
+      next();
+    }
+
+  })
+  var vm = new Vue({
+    el: '#app',
+    router: router,
+    store,
+    data() {
+      return {}
+    }
+  })
+</script>
+
+</html>

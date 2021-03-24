@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            border:0;
+        }
+        .main{
+            height:100%;
+            background-color: green;
+            overflow:hidden;
+            position: relative;
+        }
+        .con{
+            width:512px;
+            height:300px;
+            margin:0 auto;
+            
+        }
+       .left{
+           width:100px;
+           height:50px;
+           line-height:50px;
+           text-align: center;
+           background: #ddd;
+           position:absolute;
+           left:37%;
+           top:50%;
+           margin-left:-50px;
+           margin-top:-25px;
+       }
+       .right{
+           width:100px;
+           height:50px;
+           line-height:50px;
+           text-align: center;
+           background: #ddd;
+           position:absolute;
+           right:34%;
+           top:50%;
+           margin-left:-50px;
+           margin-top:-25px;
+       }
+    </style>
+</head>
+
+<body>
+    <script>
+        
+        window.onload=function(){
+
+            var imgArr=[
+            "./imgs/1.jpg",
+            "./imgs/2.jpg",
+            "./imgs/3.jpg",
+        ];
+        var count=0;
+        var timer=null;
+        var img=document.getElementsByTagName("img")[0];
+        function move(){   
+            if(count==imgArr.length-1){
+                count=0
+            }
+            else
+            {
+                count++;
+            }
+            img.src=imgArr[count];
+        }
+            let btnLeft=document.getElementsByClassName("left")[0];
+            let btnRight=document.getElementsByClassName("right")[0];
+            let main=document.getElementsByClassName("main")[0];
+             timer= setInterval(()=>{
+                   move();
+               },2000)
+           
+               main.onmouseover=function(){
+                clearInterval(timer)
+            }
+            main.onmouseout=function(){
+                timer=setInterval(()=>{
+                   move();
+               },2000)
+            }
+            btnLeft.onclick=function(){
+                if(count==0)
+                {
+                    count=imgArr.length-1;
+                }
+                else
+                {
+                    count--;
+                }
+                img.src=imgArr[count];
+            }
+            btnRight.onclick=function(){
+               if(count==imgArr.length-1){
+                   count=0;
+               }
+               else
+               {
+                   count++;
+               }
+               img.src=imgArr[count];
+            }
+        }
+
+       
+    </script>
+   <div class="main">
+       <div class="con">
+           <img src="./imgs/1.jpg" alt=""> 
+       </div>
+       <div class="left"><</div>
+       <div class="right">></div>
+   </div>
+</body>
+
+</html>
