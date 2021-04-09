@@ -10,6 +10,8 @@
 
 <body>
   <div id="app">
+    <input type="text"><br />
+    <span></span>
     <router-view></router-view>
   </div>
 </body>
@@ -18,6 +20,7 @@
 <script src="./js/vue-router.js"></script>
 <script src="./js/vuex.js"></script>
 <script type="text/javascript">
+
 const login=Vue.component('login',{
   template:`
     <div>
@@ -188,7 +191,28 @@ const login=Vue.component('login',{
     router: router,
     store,
     data() {
-      return {}
+      return {
+        testValue:132
+      }
+    },
+    mounted(){
+      let obj={};
+      let input=document.getElementsByTagName('input')[0]
+      let span=document.getElementsByTagName('span')[0]
+      Object.defineProperty(obj,'hello',{
+        get:function(){
+          return value
+        },
+        set:function(newValue){
+          value=newValue
+          input.innerText=value
+          span.innerHTML=value
+        }
+      })
+      console.log(span)
+      input.addEventListener('keyup',(e)=>{
+      obj.hello=e.target.value
+})
     }
   })
 

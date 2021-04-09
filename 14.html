@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+    <div id='app'>
+        <h1>{{a}}</h1>
+        <h1>{{c}}</h1>
+        <h1>{{d}}</h1>
+        <div id='testMsg' ref="testMsg">{{testMsg}}</div>
+        <button @click="test">test</button>
+
+        <button id="firstBtn" @click="testClick" ref="firstBtn">{{testMsg}}</button>
+        <Test :test-a="a" :name="name" @change-test="receiveMsg">
+            <h5 slot="slot1">test1</h5>
+            <h5 slot="slot2">test2</h5>
+        </Test>
+        <template v-for="(item,idx) in testData">
+            <div v-if="item.title.indexOf('日期')==-1">
+
+                <el-input placeholder="请输入内容" clearable v-model="editData[idx].value">
+                </el-input>
+            </div>
+
+            <div class="block" v-if="item.title.indexOf('日期')!=-1">
+                <el-date-picker type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+                    v-model="editData[idx].value">
+                </el-date-picker>
+            </div>
+
+
+
+
+
+        </template>
+        <button @click="setInputValue">v-model</button>
+    </div>
+</body>
+<script src="./js/vue.js"></script>
+<script src="./js/vue-router.js"></script>
+<script src="./js/vuex.js"></script>
+
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    const Test = Vue.component('Test', {
+        props: ['testA', 'name'],
+        data() {
+            return {
+                nameValue: '测试filter',
+
+
+            }
+        },
+        filters: {
+            testFilter(value) {
+                return `您好${value}`
+            }
+        },
+        computed: {
+            copyName() {
+                return this._props.name + 'hello'
+            },
+
+        },
+        template: `<div>
+                <h1>{{this._props.testA}}</h1>
+                <h1>{{this._props.name}}</h1>
+                <h1>{{this.copyName}}</h1>
+                <h5>{{this.nameValue | testFilter}}</h5>
+                <slot name="slot1"></slot>
+                <button @click="testProps">test_props</button>
+                <slot name="slot2"></slot>
+                <h1>{{this.newName}}</h1>
+            </div>`,
+        methods: {
+            testProps() {
+
+                this.$emit('change-test', 8)
+            },
+
+        },
+        beforeCreate: function () {
+            console.log("创建前")
+            console.log(this)
+        },
+
+        created: function () {
+            console.log("创建之后");
+            console.log(this)
+
+        },
+        beforeMount: function () {
+            console.log("mount之前")
+            console.log(this)
+        },
+
+        mounted: function () {
+            console.log("mount之后")
+            console.log(this)
+            console.log(this._props)
+        },
+        beforeUpdate: function () {
+            console.log("更新前");
+            console.log(this)
+        },
+
+        updated: function () {
+            console.log("更新完成");
+            console.log(this)
+        },
+
+        beforeDestroy: function () {
+            console.log("销毁前");
+            console.log(this)
+            console.log(this)
+        },
+
+        destroyed: function () {
+            console.log("已销毁");
+            console.log(this)
+        }
+    })
+    var vm = new Vue({
+        el: '#app',
+        // template:`
+        //     <h1>456789</h1>
+        // `,
+        components: { Test },
+        data() {
+            return {
+                a: 1,
+                testMsg: '测试nextTick',
+                name: 5,
+                input: '',
+                testData: [
+                    { prop: 'name', title: '姓名',value:''},
+                    { prop: 'age', title: '年龄',value:''},
+                    { prop: 'birth', title: '生日日期',value:''}
+                ],
+                editData: []
+
+            ,
+
+            }
+        },
+        methods: {
+            test() {
+                this.c = this.c + 1
+            },
+            testClick() {
+                this.testMsg = '修改后的值'
+                console.log(this.$refs.testMsg.innerHTML)
+                console.log(this.$refs.firstBtn.innerHTML)
+                this.$nextTick(() => {
+                    console.log(this.$refs.testMsg.innerHTML)
+                    console.log(this.$refs.firstBtn.innerHTML)
+                })
+            },
+            receiveMsg(res) {
+                console.log(res)
+                this.name = res
+            },
+            setInputValue() {
+               
+                // let object = this.editData;
+                // this.testData.forEach(value => {
+                //     this.$set(object, [value.prop], value); // good
+                // });
+
+                console.log(this.editData)
+
+            }
+        },
+        computed: {
+            c: {
+                get() {
+                    console.log('触发c的get')
+                    return this.a * 5
+                },
+                set(val) {
+                    console.log('触发c的set')
+                    this.a = val + 1
+                }
+            },
+            d() {
+                return this.c * 2
+            },
+        },
+            beforeCreate: function () {
+                console.log("创建前")
+                console.log(this.a)
+                console.log(this.$el)
+            },
+
+            created: function () {
+                console.log("创建之后");
+                console.log(this.a)
+                console.log(this.$el)
+
+                this.editData=this.testData
+                
+            },
+            beforeMount: function () {
+                console.log("mount之前")
+                console.log(this.a)
+                console.log(this.$el)
+            },
+
+            mounted: function () {
+                console.log("mount之后")
+                console.log(this.a)
+                console.log(this.$el)
+
+            },
+            beforeUpdate: function () {
+                console.log("更新前");
+                console.log(this.a)
+                console.log(this.$el)
+                console.log(this.testMsg)
+            },
+
+            updated: function () {
+                console.log("更新完成");
+                console.log(this.a);
+                console.log(this.$el)
+                console.log(this.testMsg)
+
+            },
+
+            beforeDestroy: function () {
+                console.log("销毁前");
+                console.log(this.a)
+                console.log(this.$el)
+                console.log(this.$el)
+            },
+
+            destroyed: function () {
+                console.log("已销毁");
+                console.log(this.a)
+                console.log(this.$el)
+            }
+
+        });
+
+
+
+
+
+</script>
+
+</html>

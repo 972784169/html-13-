@@ -4742,6 +4742,7 @@
     // #7573 disable dep collection when invoking data getters
     pushTarget();
     try {
+      // 目的是判断是否是函数，返回一个数据对象
       return data.call(vm, vm)
     } catch (e) {
       handleError(e, vm, "data()");
@@ -4992,14 +4993,14 @@
       }
       // expose real self
       vm._self = vm;
-      initLifecycle(vm);
-      initEvents(vm);
-      initRender(vm);
-      callHook(vm, 'beforeCreate');
+      initLifecycle(vm);                  // 初始化一些和生命周期相关的内容
+      initEvents(vm);                     // 初始化事件相关属性，当有父组件的方法绑定在子组件时候，供子组件调用
+      initRender(vm);                     // 添加slot属性
+      callHook(vm, 'beforeCreate');       // 调用beforeCreate钩子
       initInjections(vm); // resolve injections before data/props
-      initState(vm);
+      initState(vm);                      // 初始化数据，进行双向绑定 state/props
       initProvide(vm); // resolve provide after data/props
-      callHook(vm, 'created');
+      callHook(vm, 'created');            // 调用created钩子
 
       /* istanbul ignore if */
       if (config.performance && mark) {
@@ -5009,7 +5010,7 @@
       }
 
       if (vm.$options.el) {
-        vm.$mount(vm.$options.el);
+        vm.$mount(vm.$options.el);           // 把模板转换成render函数
       }
     };
   }
@@ -5078,11 +5079,11 @@
     this._init(options);
   }
 
-  initMixin(Vue);
-  stateMixin(Vue);
-  eventsMixin(Vue);
-  lifecycleMixin(Vue);
-  renderMixin(Vue);
+  initMixin(Vue);        // options初始化
+  stateMixin(Vue);       // 状态（props、state、computed、watch）
+  eventsMixin(Vue);      // 事件
+  lifecycleMixin(Vue);   // 生命周期
+  renderMixin(Vue);      // 页面渲染
 
   /*  */
 
