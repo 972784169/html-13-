@@ -158,6 +158,7 @@
             },
             testClick() {
                 this.testMsg = '修改后的值'
+                console.log('修改后的值')
                 console.log(this.$refs.testMsg.innerHTML)
                 console.log(this.$refs.firstBtn.innerHTML)
                 this.$nextTick(() => {
