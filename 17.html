@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        /* 方法一 */
+        function moveData(oldParam, newParam) {
+            if (!Array.isArray(oldParam)) {
+                return;
+            }
+            if (!Array.isArray(newParam)) {
+                return;
+            }
+            let yuanArray = oldParam;
+            let Tags = newParam;
+            let yuanMap = new Map();
+            let yuanIndex = new Map();
+            let newIndex = new Map();
+            let newMap = new Map();
+            let insertIndex = 0;
+            let removeIndex = 0;
+
+            for (let i = 0; i < yuanArray.length; i++) {
+                //源数据的下标顺序唯一
+                yuanMap.set(yuanArray[i].groupNo + "," + yuanArray[i].groupId, i);
+                yuanIndex.set(i, yuanArray[i]);
+            }
+            for (let i = 0; i < Tags.length; i++) {
+                //源数据的下标顺序唯一
+                newMap.set(Tags[i].groupNo + "," + Tags[i].groupId, i);
+                newIndex.set(i, Tags[i]);
+
+            }
+
+
+            //比较新老的数据下标
+            try {
+                yuanMap.forEach(function (value, key) {
+                    //console.log(value,key);
+                    let oldIndex = newMap.get(key);
+                    if (oldIndex != value) {
+                        removeIndex = value;
+                        insertIndex = oldIndex;
+                        throw new Error("停止循环");
+                    }
+                });
+            } catch (e) {
+
+            }
+            console.log("rmove:" + removeIndex);
+            console.log("insert:" + insertIndex);
+            let insertObj = {};
+            let sftz = false;
+            // 循环源数据，通过下标修改数据
+            for (let i = removeIndex + 1; i < yuanArray.length; i++) {
+                console.log("removeIndex" + removeIndex);
+                let yusnaGroupNo = yuanArray[removeIndex].groupNo;
+                let newGroupNo = yuanArray[insertIndex].groupNo;
+                if (yusnaGroupNo != newGroupNo) {
+                    break;
+                }
+                //同组的呼唤
+                let groupNo = yuanArray[i].groupNo;
+                let current = Tags[removeIndex].groupNo;
+
+
+                console.log("groupNo", groupNo);
+                console.log("current", current);
+                console.log("i", i);
+                console.log("----------------------------------------", yuanArray[i])
+                if (groupNo != current) {
+                    break;
+                }
+                console.log(" yuanArray[i].groupId", yuanArray[i].groupId)
+                yuanArray[i].groupId = yuanArray[i].groupId - 1;
+                console.log(" yuanArray[i].groupId", yuanArray[i].groupId - 1)
+                sftz = true;
+            }
+
+
+
+            if (1 == 2) {
+
+                console.log("进入同组");
+                yuanArray[removeIndex].groupNo = Tags[removeIndex].groupNo;
+
+                yuanArray[removeIndex].groupId = Tags[removeIndex].groupId;
+                Object = yuanArray[removeIndex];
+            } else {
+                yuanArray[removeIndex].groupNo = Tags[insertIndex - 1].groupNo;
+                yuanArray[removeIndex].groupId = Tags[insertIndex - 1].groupId + 1;
+                Object = yuanArray[removeIndex];
+            }
+            //要对插入的数据进行数据的修改
+            console.log("组装原始数据", yuanArray)
+
+            console.log("object---" + yuanArray[removeIndex]);
+            //准备插入数据，目前知道该插入的下标位置是哪里，插入后的数据 id要加1个
+
+            let yusnaGroupNo = yuanArray[removeIndex].groupNo;
+            let newGroupNo = yuanArray[insertIndex].groupNo;
+            if (yusnaGroupNo != newGroupNo) {
+                for (let i = (insertIndex + removeIndex - 1); i < yuanArray.length; i++) {
+
+                    //跨组的互换
+                    //首先判断后面的数据是不是跟
+                    console.log("跨组的互换");
+
+                    let groupNo = yuanArray[i].groupNo;
+                    let current = yuanArray[removeIndex].groupNo;
+                    if (groupNo != current) {
+                        break;
+                    }
+                    yuanArray[i].groupId = yuanArray[i].groupId + 1;
+                }
+            }
+
+            console.log("--------------->yuanArray", yuanArray)
+            //重新定义一个数组接收
+            let newArray = [];
+            for (let i = 0; i < yuanArray.length; i++) {
+
+                if (i == removeIndex) {
+                    continue;
+
+                }
+                newArray.push(yuanArray[i]);
+
+
+            }
+            //再新的数组里面插入数据
+            newArray.splice(insertIndex, 0, Object);
+            let returnDataArray = [];
+            //进行分组
+            let groupArray = groupByGroupNo(newArray);
+            for (let i = 0; i < groupArray.length; i++) {
+                let dataArray = groupArray[i].data;
+                for (let j = 0; j < dataArray.length; j++) {
+                    dataArray[j].groupId = j + 1;
+                }
+                returnDataArray.push(dataArray);
+
+            }
+
+            returnDataArray = returnDataArray.flat(Infinity)
+            //重新分组
+            return returnDataArray;
+
+
+        }
+        /* 按组号分组 */
+        function groupByGroupNo(arr) {
+            var map = {},
+                dest = [];
+            for (var i = 0; i < arr.length; i++) {
+                var ai = arr[i];
+                if (!map[ai.groupNo]) {
+                    dest.push({
+                        groupNo: ai.groupNo,
+                        groupId: ai.groupId,
+                        opt: ai.opt,
+                        data: [ai]
+                    });
+                    map[ai.groupNo] = ai;
+                } else {
+                    for (var j = 0; j < dest.length; j++) {
+                        var dj = dest[j];
+                        if (dj.groupNo == ai.groupNo) {
+                            dj.data.push(ai);
+                            break;
+                        }
+                    }
+                }
+            }
+            return dest
+        }
+        /* 方法二 */
+        function moveData2(oldParam, newParam) {
+            if (!Array.isArray(oldParam)) {
+                return;
+            }
+            if (!Array.isArray(newParam)) {
+                return;
+            }
+            let yuanArray = oldParam;
+            let Tags = newParam;
+            let yuanMap = new Map();
+            let yuanIndex = new Map();
+            let newIndex = new Map();
+            let newMap = new Map();
+            let insertIndex = 0;
+            let removeIndex = 0;
+
+            for (let i = 0; i < yuanArray.length; i++) {
+                //源数据的下标顺序唯一
+                yuanMap.set(yuanArray[i].groupNo + "," + yuanArray[i].groupId, i);
+                yuanIndex.set(i, yuanArray[i]);
+            }
+            for (let i = 0; i < Tags.length; i++) {
+                //源数据的下标顺序唯一
+                newMap.set(Tags[i].groupNo + "," + Tags[i].groupId, i);
+                newIndex.set(i, Tags[i]);
+
+            }
+
+
+            //比较新老的数据下标
+            try {
+                yuanMap.forEach(function (value, key) {
+                    //console.log(value,key);
+                    let oldIndex = newMap.get(key);
+                    if (oldIndex != value) {
+                        removeIndex = value;
+                        insertIndex = oldIndex;
+                        throw new Error("停止循环");
+                    }
+                });
+            } catch (e) {
+
+            }
+            console.log("value:"+insertIndex);
+            console.log(Tags[insertIndex+ 1].groupNo);
+            for (let i = insertIndex; i < insertIndex + 1; i++) {
+                if(i==1){
+                    Tags[i-1].groupNo=Tags[i].groupNo;
+                }else{
+                    Tags[i].groupNo = Tags[i + 1].groupNo;
+                }
+               
+            }
+            let groupArray= groupByGroupNo(Tags);
+            let returnDataArray=[];
+            for (let i = 0; i < groupArray.length; i++) {
+                let dataArray = groupArray[i].data;
+                for (let j = 0; j < dataArray.length; j++) {
+                    dataArray[j].groupId = j + 1;
+                }
+                returnDataArray.push(dataArray);
+
+            }
+            return returnDataArray;
+
+        }
+        moveData2([
+
+            { groupNo: 1, groupId: 1, opt: '1-1' },
+            { groupNo: 1, groupId: 2, opt: '1-2' },
+            { groupNo: 1, groupId: 3, opt: '1-3' },
+            { groupNo: 1, groupId: 4, opt: '1-4' },
+            { groupNo: 3, groupId: 1, opt: '3-1' },
+            { groupNo: 3, groupId: 2, opt: '3-2' },
+            { groupNo: 3, groupId: 3, opt: '3-3' },
+            { groupNo: 3, groupId: 4, opt: '3-4' }
+        ], [
+
+            { groupNo: 1, groupId: 1, opt: '1-1' },
+            { groupNo: 1, groupId: 2, opt: '1-2' },
+            { groupNo: 1, groupId: 3, opt: '1-3' },
+            { groupNo: 1, groupId: 4, opt: '1-4' },
+            { groupNo: 3, groupId: 2, opt: '3-2' },
+            { groupNo: 3, groupId: 1, opt: '3-1' },
+            { groupNo: 3, groupId: 3, opt: '3-3' },
+            { groupNo: 3, groupId: 4, opt: '3-4' }
+        ])
+
+        groupByGroupNo([
+            { groupNo: 1, groupId: 1, opt: '1-1' },
+            { groupNo: 1, groupId: 2, opt: '1-2' },
+            { groupNo: 1, groupId: 3, opt: '1-3' },
+            { groupNo: 1, groupId: 4, opt: '1-4' },
+            { groupNo: 3, groupId: 1, opt: '3-1' },
+            { groupNo: 3, groupId: 2, opt: '3-2' },
+            { groupNo: 3, groupId: 3, opt: '3-3' },
+            { groupNo: 3, groupId: 4, opt: '3-4' }
+        ]);
+        moveData([
+
+            { groupNo: 1, groupId: 1, opt: '1-1' },
+            { groupNo: 1, groupId: 2, opt: '1-2' },
+            { groupNo: 1, groupId: 3, opt: '1-3' },
+            { groupNo: 1, groupId: 4, opt: '1-4' },
+            { groupNo: 3, groupId: 1, opt: '3-1' },
+            { groupNo: 3, groupId: 2, opt: '3-2' },
+            { groupNo: 3, groupId: 3, opt: '3-3' },
+            { groupNo: 3, groupId: 4, opt: '3-4' }
+        ], [
+
+            { groupNo: 1, groupId: 1, opt: '1-1' },
+            { groupNo: 1, groupId: 2, opt: '1-2' },
+            { groupNo: 1, groupId: 3, opt: '1-3' },
+            { groupNo: 1, groupId: 4, opt: '1-4' },
+            { groupNo: 3, groupId: 2, opt: '3-2' },
+            { groupNo: 3, groupId: 1, opt: '3-1' },
+            { groupNo: 3, groupId: 3, opt: '3-3' },
+            { groupNo: 3, groupId: 4, opt: '3-4' }
+        ])
+    </script>
+</body>
+
+</html>
